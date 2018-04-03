@@ -1,0 +1,10 @@
+.idea/
+.DS_Store
+tmp/
+__pycache__/
+*.txt
+*.pckl
+*.pkl
+*.tsv
+*.zip
+*_w2v.py
