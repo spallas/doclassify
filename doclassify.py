@@ -2,9 +2,11 @@ import os
 
 import tensorflow as tf
 from keras import Model, Input
-from keras.layers import Dense, Conv1D, MaxPooling1D, GlobalMaxPooling1D, Embedding
+from keras.layers import Dense, Conv1D, MaxPooling1D, GlobalMaxPooling1D, Embedding, Dropout
+from sklearn.metrics import confusion_matrix, classification_report
 
 from preprocessing import load_dataset
+from evaluation import plot_heat_matrix
 
 
 TRAIN_DIR = "../dataset/DATA/TRAIN"
@@ -31,6 +33,8 @@ def main(_):
     for class_string in classes_strings:
         class2int[class_string] = len(class2int)
 
+    print(len(class2int))
+
     x_train, y_train, x_devel, y_devel, embeddings = load_dataset(MAX_DOC_LEN)
 
     # load pre-trained word embeddings into an Embedding layer
@@ -44,7 +48,7 @@ def main(_):
     print('Training model.')
 
     # train a 1D conv net with global max pooling
-    sequence_input = Input(shape=(MAX_DOC_LEN,), dtype='int32')
+    sequence_input = Input(shape=(MAX_DOC_LEN,), dtype='float32')
     embedded_sequences = embedding_layer(sequence_input)
     x = Conv1D(128, 5, activation='relu')(embedded_sequences)
     x = MaxPooling1D(5)(x)
@@ -53,17 +57,25 @@ def main(_):
     x = Conv1D(128, 5, activation='relu')(x)
     x = GlobalMaxPooling1D()(x)
     x = Dense(128, activation='relu')(x)
+    x = Dropout(0.5)(x)
     predicted = Dense(len(class2int), activation='softmax')(x)
 
     model = Model(sequence_input, predicted)
-    model.compile(loss='categorical_crossentropy',
-                  optimizer='rmsprop',
+    model.compile(loss='sparse_categorical_crossentropy',
+                  optimizer='adam',
                   metrics=['acc'])
 
     model.fit(x_train, y_train,
               batch_size=128,
-              epochs=10,
+              epochs=7,
               validation_data=(x_devel, y_devel))
+
+    model.save("model.h5")
+
+    y_pred = model.predict(x_devel)
+
+    plot_heat_matrix(confusion_matrix(y_devel, y_pred), classes_strings)
+    print(classification_report(y_devel, y_pred, target_names=classes_strings))
 
 
 if __name__ == "__main__":
