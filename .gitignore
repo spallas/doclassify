@@ -7,4 +7,5 @@ __pycache__/
 *.pkl
 *.tsv
 *.zip
+*.h5
 *_d2c.py
