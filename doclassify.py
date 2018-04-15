@@ -7,7 +7,7 @@ from sklearn.metrics import confusion_matrix, classification_report
 from sklearn import svm
 from collections import Counter
 
-from preprocessing import load_dataset, load_for_sklearn, PREPROCESS_FILE
+from preprocessing import load_dataset, load_for_sklearn
 from evaluation import plot_heat_matrix
 
 
@@ -29,6 +29,10 @@ def installation_test():
 
 
 def main(_):
+    """
+    Please before running make sure all the files in the preprocessing code are present in the
+    right location and with the right format.
+    """
     installation_test()
 
     classes_strings = ['ANIMALS', 'ART_ARCHITECTURE_AND_ARCHAEOLOGY', 'BIOLOGY',
@@ -56,10 +60,10 @@ def main(_):
         for c in classes_counts:
             svm_domain_dict[c] = (1 - classes_counts[c] / len(y_train))
         # manually adjust underrepresented classes
-        svm_domain_dict[classes_strings.index("CULTURE_AND_SOCIETY")] = 5.0
-        svm_domain_dict[classes_strings.index("METEOROLOGY")] = 3.0
-        svm_domain_dict[classes_strings.index("HISTORY")] = 3.0
-        svm_domain_dict[classes_strings.index("ENGINEERING_AND_TECHNOLOGY")] = 3.0
+        svm_domain_dict[classes_strings.index("CULTURE_AND_SOCIETY")] = 9.0
+        svm_domain_dict[classes_strings.index("METEOROLOGY")] = 5.0
+        svm_domain_dict[classes_strings.index("HISTORY")] = 5.0
+        svm_domain_dict[classes_strings.index("ENGINEERING_AND_TECHNOLOGY")] = 5.0
         x_weights = []
         for i in y_train:
             x_weights.append(svm_domain_dict[i])

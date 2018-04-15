@@ -8,4 +8,3 @@ __pycache__/
 *.tsv
 *.zip
 *.h5
-*_d2c.py
