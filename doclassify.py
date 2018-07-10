@@ -1,4 +1,3 @@
-import os
 
 import tensorflow as tf
 from keras import Model, Input
@@ -10,9 +9,6 @@ from collections import Counter
 from preprocessing import load_dataset, load_for_sklearn
 from evaluation import plot_heat_matrix
 
-
-TRAIN_DIR = "dataset/DATA/TRAIN"
-VALID_DIR = "dataset/DATA/DEV"
 MODE = "DNN"
 
 EMBEDDING_SIZE = 200
